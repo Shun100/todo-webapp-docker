@@ -1,0 +1,31 @@
+services:
+  maven:
+    build: ./todo
+    volumes:
+      - ./todo:/todo
+      - appwar:/app/target # TomcatへのWAR受け渡し用
+    # WARをビルドしてTomcatとの受け渡し用のディレクトリにコピーする
+    command: /bin/sh -c "mvn clean package -DskipTests && cp /todo/target/todo.war /app/target/todo.war"
+  tomcat:
+    image: tomcat:10-jdk17-temurin
+    ports:
+      - "8080:8080"
+    volumes:
+      - appwar:/usr/local/tomcat/webapps/
+    depends_on:
+      - h2db
+    restart: unless-stopped
+  h2db:
+    image: oscarfonts/h2
+    ports:
+      - "1521:1521" # TCP接続用ポート
+      - "81:81" # Webコンソール用ポート
+    environment:
+      H2_OPTIONS: "-tcp -tcpAllowOthers -ifNotExists"
+    volumes:
+      - h2data:/opt/h2-data # データベースの永続化用
+    restart: unless-stopped
+
+volumes:
+  appwar: # MavenとTomcatで共有するWARファイル置き場
+  h2data: # H2のデータの永続化
