@@ -96,20 +96,20 @@ wsl -d Ubuntu
 ```
 
 - apt用プロキシ設定
-`/etc/apt/apt.conf.d/95proxies`に以下を追記する。
+  - `/etc/apt/apt.conf.d/95proxies`に以下を追記する。
 
-``` conf
-Acquire::http::Proxy "http://proxy.example.com:8080";
-Acquire::https::Proxy "http://proxy.example.com:8080";
-```
+  ``` conf
+  Acquire::http::Proxy "http://proxy.example.com:8080";
+  Acquire::https::Proxy "http://proxy.example.com:8080";
+  ```
 
 - curl用プロキシ設定
-  `~/.bashrc`に以下を追記する。
+  - `~/.bashrc`に以下を追記する。
 
-``` conf
-export http_proxy="http://proxy.example.com:8080"
-export https_proxy="http://proxy.example.com:8080"
-```
+  ``` conf
+  export http_proxy="http://proxy.example.com:8080"
+  export https_proxy="http://proxy.example.com:8080"
+  ```
 
 - Dockerのインストール
 
@@ -159,24 +159,24 @@ exit                          # 再度Ubuntuにログインするとsudoが不�
 
 - ソースコードをダウンロード
   - [リポジトリ](https://github.com/Shun100/todo-webapp-docker)
-<br>
+
 - VSCodeからWSL(Ubuntu)に接続
   - `Ctrl + Shift + P`
   - `WSL: Connect to WSL using Distro in New Window` -> Ubuntuを選択
-<br>
-- ソースコードのディレクトリに移動
-  WindowsのCドライブとUbuntuの`/mnt/c`が自動的にマウントされているので以下のディレクトリに移動する。
 
-``` bash
-cd /mnt/c/your-project/todo
-```
+- ソースコードのディレクトリに移動
+  - WindowsのCドライブとUbuntuの`/mnt/c`が自動的にマウントされているので以下のディレクトリに移動する。
+
+  ``` bash
+  cd /mnt/c/your-project/todo
+  ```
 
 - Mavenのプロキシ設定
-  `todo/settings.xml`
+  - `todo/settings.xml`
 
-``` xml
-<host>your.proxy.co.jp</host>
-```
+  ``` xml
+  <host>your.proxy.co.jp</host>
+  ```
 
 - ビルド + デプロイ
 
