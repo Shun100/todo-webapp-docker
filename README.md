@@ -189,29 +189,51 @@ docker compose up -d --build
 
 ## Dockerコマンドチートシート
 
+- コンテナの終了
+
 ``` bash
-# コンテナの終了
 docker compose down
+```
 
-# 再ビルド（ソースコードを変更した実施）
+- 再ビルド（ソースコードを変更したら実施）
+
+``` bash
 docker compose up -d --build maven
+```
 
-# コンテナのログを表示
+- コンテナのログを表示
+
+``` bash
 docker logs コンテナ名
+```
 
-# コンテナの中に入る
+- コンテナの中に入る
+
+``` bash
 docker exec -it コンテナ名 sh
+```
 
-# 停止中・停止予定中のコンテナを削除
+- 停止中・停止予定中のコンテナを削除
+
+``` bash
 docker container prune
+```
 
-# 起動中のコンテナを確認
+- 起動中のコンテナ一覧を表示
+
+``` bash
 docker compose ls -a
+```
 
-# イメージの一覧を表示
+- イメージの一覧を表示
+
+``` bash
 docker image -a
+```
 
-# すべてのイメージを一括削除
+- すべてのイメージを一括削除
+
+``` bash
 docker rmi $(docker images -q)
 ```
 
