@@ -1,27 +1,26 @@
 # todo-webapp-docker
 
 ## 概要
+
 - 社内勉強会用に作成したWebアプリです。
 - VSCode + Java + Tomcatの環境構築手順が煩雑であることからDocker版を作成しました。
 
-
 ## 目次
-- [動作確認環境](#動作確認環境)
-- [使用技術一覧](#使用技術一覧)
-- [環境構築手順](#環境構築手順)
-  - [1. WSL2 + Linuxディストリビューションのインストール](#1-wsl2--linuxディストリビューションのインストール)
-  - [2. Docker + Docker Composeのインストール](#2-docker--docker-composeのインストール)
-  - [3. VSCodeからDockerを操作できるようにする](#3-vscodeからdockerを操作できるようにする)
-  - ※ Proxy環境下での手順資料は別途用意します。
-- [ビルド・デプロイ手順](#ビルドデプロイ手順)
-  - ※ Proxy環境下での手順資料は別途用意します。
-- [その他のコマンド](#その他のコマンド)
-- [設計情報](#設計情報)
-  - [画面遷移図](#画面遷移図)
-  - [クラス図](#クラス図)
 
+- [todo-webapp-docker](#todo-webapp-docker)
+  - [概要](#概要)
+  - [目次](#目次)
+  - [動作確認環境](#動作確認環境)
+  - [使用技術一覧](#使用技術一覧)
+  - [環境構築手順](#環境構築手順)
+  - [ビルド・デプロイ手順](#ビルドデプロイ手順)
+  - [Dockerコマンドチートシート](#dockerコマンドチートシート)
+  - [設計情報](#設計情報)
+    - [画面遷移図](#画面遷移図)
+    - [クラス図](#クラス図)
 
 ## 動作確認環境
+
 |                             |                         |
 | --------------------------- | ----------------------- |
 | ホストOS                    | Windows 10.0.26100.4652 |
@@ -32,8 +31,8 @@
 | VSCode WSL Extension        | 0.99.0                  |
 | Google Chrome               | 138.0.7204.184  |
 
-
 ## 使用技術一覧
+
 | 技術名      | バージョン | 説明                       | 選定理由                                                                                       |
 | ----------- | ---------- | -------------------------- | ---------------------------------------------------------------------------------------------- |
 | OpenJDK     | 17         | 開発言語                   | 勉強会の要件のため。                                                                           |
@@ -41,7 +40,6 @@
 | Tomcat      | 10         | Webサーバ                  | Javaのデファクトスタンダードであるため。                                                       |
 | H2 database | 2.2.224    | データベース               | PostgreSQLと比較して軽量なため。加えて、Javaとの親和性が高く、インメモリでの動作も可能なため。 |
 | Bootstrap   | 5.3.0      | スタイリング用のライブラリ | 勉強会の趣旨はバックエンドであり、フロントエンド側は極力簡実装の手間を省くため。               |
-
 
 ## 環境構築手順
 
@@ -77,96 +75,145 @@ flowchart
 
 ```
 
-### 1. WSL2 + Linuxディストリビューションのインストール
-1-1. WSL2をインストールする。
-  - `wsl --install`
+- WSL2のインストール
 
-1-2. PCを再起動する。
+``` bash
+wsl --install
+wsl --version # インストール成否の確認
+```
 
-1-3. WSL2がインストールできたか確認する。
-  - `wsl --version`
+- Ubuntuのインストール
 
-1-3. Linuxディストリビューションをインストールする。
-  - `wsl --install Ubuntu`
-    - パスワードを聞かれたら設定しておく。
+``` bash
+wsl --install Ubuntu  # 途中でパスワードを聞かれるので設定する
+wsl --list            # インストール成否の確認
+```
 
-1-4. Linuxディストリビューションがインストールできたか確認する。
-  - `wsl --list`
+- Ubuntuにログイン
 
-### 2. Docker + Docker Composeのインストール
-2-1. Ubuntuにログインする。
-  - `wsl -d ubuntu`
+``` bash
+wsl -d Ubuntu
+```
 
-2-2. Ubuntu内にDockerをインストールする。
-  - `sudo apt update`
-  - `curl https://get.docker.com | sh`
+- apt用プロキシ設定
+`/etc/apt/apt.conf.d/95proxies`に以下を追記する。
 
-2-3. docker-composeをインストールする。
-  - `sudo curl -L "https://github.com/docker/compose/releases/download/v2.39.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
-  - `sudo chmod +x /usr/local/bin/docker-compose`
-  - `sudo apt install -y docker-compose`
+``` conf
+Acquire::http::Proxy "http://proxy.example.com:8080";
+Acquire::https::Proxy "http://proxy.example.com:8080";
+```
 
-2-4. Dockerの動作確認を行う。
-  - `sudo docker run --rm hello-world`
-    - Hello from Docker!と表示されればOK
+- curl用プロキシ設定
+  `~/.bashrc`に以下を追記する。
 
-2-5. sudoなしでdockerコマンドを使用可能にする。
-  - ※VSCodeの拡張機能から実行できるようにするために必要な設定
-  - `sudo group add docker`
-    - already existsと言われたらスキップ
-  - `sudo usermod -aG docker $USER`
-  - `exit`
-  - コンソールに入りなおすとsudoが不要になっているはず
+``` conf
+export http_proxy="http://proxy.example.com:8080"
+export https_proxy="http://proxy.example.com:8080"
+```
 
-### 3. VSCodeからDockerを操作できるようにする
-3-1. VSCodeにWSL Extensionをインストールする。
+- Dockerのインストール
 
-3-2. VSCodeにDocker Extensionをインストールする。
+``` bash
+sudo apt update
+curl https://get.docker.com | sh
+sudo docker run --rm hello-world # 動作確認 Hello form Docker!と表示されればOK
+```
 
-3-3. VSCodeからWSL(Ubuntu)に接続する。
-  - `Ctrl + Shift + P`
-  - `WSL: Connect to WSL using Distro in New Window` -> Ubuntuを選択
+- sudoなしでdockerコマンドをを使用可能にする
 
-3-4. 開発用のプロジェクトフォルダを作成する。
-  - ※任意のパスでOK
+``` bash
+sudo group add docker         # already existsと言われたらスキップ
+sudo usermod -aG docker $USER
+exit                          # 再度Ubuntuにログインするとsudoが不要になっているはず
+```
 
+- Docker用プロキシ設定
+  - 設定ファイルを作成する。
+
+  ``` bash
+  sudo mkdir -p /etc/systemd/system/docker.service.d
+  sudo vim /etc/systemd/system/docker.service.d/http-proxy.conf
+  ```
+
+  - 設定ファイルにプロキシの設定を記述する。
+
+  ``` bash
+  [Service]
+  Environment="HTTP_PROXY=http://proxy.example.com:8080"
+  Environment="HTTPS_PROXY=http://proxy.example.com:8080"
+  ```
+
+  - dockerを再起動する。
+
+  ``` bash
+  sudo systemctl daemon-reexec
+  sudo systemctl daemon-reload
+  sudo systemctl restart docker
+  ```
+
+- VSCodeに拡張機能をインストール
+  - WSL
+  - Docker
 
 ## ビルド・デプロイ手順
-- todoフォルダに移動する。
-  - `cd {path_to_your_project}/todo`
 
-- コンテナを起動する。(ビルド＋デプロイ)
-  - `docker compose up -d --build`
-  
-- ブラウザから`http://localhost:8080/todo/top`にアクセスする。
+- ソースコードをダウンロード
+  - [リポジトリ](https://github.com/Shun100/todo-webapp-docker)
+<br>
+- VSCodeからWSL(Ubuntu)に接続
+  - `Ctrl + Shift + P`
+  - `WSL: Connect to WSL using Distro in New Window` -> Ubuntuを選択
+<br>
+- ソースコードのディレクトリに移動
+  WindowsのCドライブとUbuntuの`/mnt/c`が自動的にマウントされているので以下のディレクトリに移動する。
 
+``` bash
+cd /mnt/c/your-project/todo
+```
 
-## その他のコマンド
-- コンテナを終了する。(アプリを終了する)
-  - `docker compose down`
+- Mavenのプロキシ設定
+  `todo/settings.xml`
 
-- 再ビルド(ソースコードを変更したら実施)
-  - `docker compose up -d --build maven`
-  - ※ Tomcatのホットデプロイまで少し時間かかるのて注意
+``` xml
+<host>your.proxy.co.jp</host>
+```
 
-- コンテナのログを見る(デバッグ用)
-  - `docker logs {コンテナ名}`
+- ビルド + デプロイ
 
-- コンテナの中に入る
-  - `docker exec -it {コンテナ名} sh`
+``` bash
+docker compose up -d --build
+```
 
-- 停止中・停止予定のコンテナを削除する
-  - `docker container prune`
+- 動作確認
+  - ブラウザから`http://localhost:8080/todo/top`にアクセス
 
-- 起動中のコンテナを確認する
-  - `docker-compose ls -a`
+## Dockerコマンドチートシート
 
-- イメージの一覧を表示する
-  - `docker images -a`
+``` bash
+# コンテナの終了
+docker compose down
 
-- すべてのイメージを一括削除する
-  - `docker rmi $(docker images -q)`
+# 再ビルド（ソースコードを変更した実施）
+docker compose up -d --build maven
 
+# コンテナのログを表示
+docker logs コンテナ名
+
+# コンテナの中に入る
+docker exec -it コンテナ名 sh
+
+# 停止中・停止予定中のコンテナを削除
+docker container prune
+
+# 起動中のコンテナを確認
+docker compose ls -a
+
+# イメージの一覧を表示
+docker image -a
+
+# すべてのイメージを一括削除
+docker rmi $(docker images -q)
+```
 
 ## 設計情報
 
