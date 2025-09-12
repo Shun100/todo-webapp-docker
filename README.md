@@ -116,15 +116,7 @@ wsl -d Ubuntu
 ``` bash
 sudo apt update
 curl https://get.docker.com | sh
-sudo docker run --rm hello-world # 動作確認 Hello form Docker!と表示されればOK
-```
-
-- sudoなしでdockerコマンドをを使用可能にする
-
-``` bash
-sudo group add docker         # already existsと言われたらスキップ
-sudo usermod -aG docker $USER
-exit                          # 再度Ubuntuにログインするとsudoが不要になっているはず
+docker --version # インストール成否の確認
 ```
 
 - Docker用プロキシ設定
@@ -151,9 +143,23 @@ exit                          # 再度Ubuntuにログインするとsudoが不�
   sudo systemctl restart docker
   ```
 
+  - 動作確認
+
+  ``` bash
+  sudo docker run --rm hello-world # Hello form Docker!と表示されればOK
+  ```
+
 - VSCodeに拡張機能をインストール
   - WSL
   - Docker
+
+- (任意) sudoなしでdockerコマンドをを使用可能にする
+
+``` bash
+sudo groupadd docker         # already existsと言われたらスキップ
+sudo usermod -aG docker $USER
+exit                          # 再度Ubuntuにログインするとsudoが不要になっているはず
+```
 
 ## ビルド・デプロイ手順
 
