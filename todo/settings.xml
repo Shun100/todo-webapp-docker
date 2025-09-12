@@ -5,7 +5,7 @@
   <proxies>
     <proxy>
       <id>proxy</id>
-      <active>true</active>
+      <active>false</active>
       <protocol>http</protocol>
       <host>your.proxy.co.jp</host>
       <port>8080</port>

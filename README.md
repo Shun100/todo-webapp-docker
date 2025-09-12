@@ -182,6 +182,10 @@ exit                          # 再度Ubuntuにログインするとsudoが不�
 
 ``` bash
 docker compose up -d --build
+
+# キャッシュを使用しない場合
+docker compose build --no-cache
+docker compose up -d
 ```
 
 - 動作確認
