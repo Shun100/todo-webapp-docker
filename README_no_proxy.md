@@ -75,44 +75,114 @@ flowchart
 
 ```
 
-- ソースコードをダウンロード
-  - [リポジトリ](https://github.com/Shun100/todo-webapp-docker)
+- WSL2のインストール
+
+``` bash
+wsl --install
+wsl --version # インストール成否の確認
+```
+
+- Ubuntuのインストール
+
+``` bash
+wsl --install Ubuntu  # 途中でパスワードを聞かれるので設定する
+wsl --list            # インストール成否の確認
+```
+
+- Ubuntuにログイン
+
+``` bash
+wsl -d Ubuntu
+```
+
+- apt用プロキシ設定
+  - `/etc/apt/apt.conf.d/95proxies`に以下を追記する。
+
+  ``` conf
+  Acquire::http::Proxy "http://proxy.example.com:8080";
+  Acquire::https::Proxy "http://proxy.example.com:8080";
+  ```
+
+- curl用プロキシ設定
+  - `~/.bashrc`に以下を追記する。
+
+  ``` conf
+  export http_proxy="http://proxy.example.com:8080"
+  export https_proxy="http://proxy.example.com:8080"
+  ```
+
+- Dockerのインストール
+
+``` bash
+sudo apt update
+curl https://get.docker.com | sh
+docker --version # インストール成否の確認
+```
+
+- Docker用プロキシ設定
+  - 設定ファイルを作成する。
+
+  ``` bash
+  sudo mkdir -p /etc/systemd/system/docker.service.d
+  sudo vim /etc/systemd/system/docker.service.d/http-proxy.conf
+  ```
+
+  - 設定ファイルにプロキシの設定を記述する。
+
+  ``` bash
+  [Service]
+  Environment="HTTP_PROXY=http://proxy.example.com:8080"
+  Environment="HTTPS_PROXY=http://proxy.example.com:8080"
+  ```
+
+  - dockerを再起動する。
+
+  ``` bash
+  sudo systemctl daemon-reexec
+  sudo systemctl daemon-reload
+  sudo systemctl restart docker
+  ```
+
+  - 動作確認
+
+  ``` bash
+  sudo docker run --rm hello-world # Hello form Docker!と表示されればOK
+  ```
 
 - VSCodeに拡張機能をインストール
   - WSL
   - Docker
 
-- WSL2+Ubuntuのインストール
+- (任意) sudoなしでdockerコマンドをを使用可能にする
 
-  ``` bash
-  wsl --install
-  wsl --version # インストール成否の確認
+``` bash
+sudo groupadd docker         # already existsと言われたらスキップ
+sudo usermod -aG docker $USER
+exit                          # 再度Ubuntuにログインするとsudoが不要になっているはず
+```
 
-  wsl --install Ubuntu  # 途中でパスワードを聞かれるので設定する
-  wsl --list            # インストール成否の確認
+## ビルド・デプロイ手順
 
-  wsl -d Ubuntu # Ubuntuにログイン
-  ```
+- ソースコードをダウンロード
+  - [リポジトリ](https://github.com/Shun100/todo-webapp-docker)
 
 - VSCodeからWSL(Ubuntu)に接続
   - `Ctrl + Shift + P`
   - `WSL: Connect to WSL using Distro in New Window` -> Ubuntuを選択
 
-- プロキシ設定＋Dockerのインストール
+- ソースコードのディレクトリに移動
+  - WindowsのCドライブとUbuntuの`/mnt/c`が自動的にマウントされているので以下のディレクトリに移動する。
 
   ``` bash
-  # WindowsのCドライブとUbuntuの`/mnt/c`が自動的にマウントされているので以下のディレクトリに移動する。
-  cd /mnt/c/path-to-your-project
-
-  # プロキシ設定＋Dockerインストール用のスクリプトを実行
-  source setup_with_proxy.sh http://proxy.example.com:8080
-
-  # 権限設定を反映（新しくシェルを起動）
-  # ⇒ Dockerをsudoなしで実行できるようにスクリプト内で権限を設定している。以下のコマンドの設定を反映する。
-  newgrp docker
+  cd /mnt/c/your-project/todo
   ```
 
-## ビルド・デプロイ手順
+- Mavenのプロキシ設定
+  - `todo/settings.xml`
+
+  ``` xml
+  <host>your.proxy.co.jp</host>
+  ```
 
 - ビルド + デプロイ
 
