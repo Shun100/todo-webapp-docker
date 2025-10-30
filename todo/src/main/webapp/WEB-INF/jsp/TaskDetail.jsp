@@ -3,6 +3,9 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%-- 削除確認ダイアログ templateタグのためデフォルトでは非表示になる。 --%>
+<jsp:include page="common/deleteConfirmDialog.jsp" />
+
 <jsp:include page="common/Header.jsp" />
 
 <div>
@@ -19,9 +22,11 @@
 
   <div class="d-flex justify-content-end gap-2">
     <a href="${pageContext.request.contextPath}/newTask?taskId=${task.taskId}"><button class="btn btn-primary" type="button">編集</button></a>
-    <button class="btn btn-secondary" type="submit">削除</button>
+    <button id="deleteBtn"  class="btn btn-secondary" type="submit">削除</button>
     <a href="${pageContext.request.contextPath}/tasks"><button class="btn btn-secondary" type="button">戻る</button></a>
   </div>
 </form>
 
 <jsp:include page="common/Footer.jsp" />
+
+<script src="../../js/tasksDetail.js"></script>
