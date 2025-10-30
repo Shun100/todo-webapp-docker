@@ -3,9 +3,6 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%-- 削除確認ダイアログ templateタグのためデフォルトでは非表示になる。 --%>
-<jsp:include page="common/deleteConfirmDialog.jsp" />
-
 <jsp:include page="common/Header.jsp" />
 
 <div>
@@ -26,6 +23,9 @@
     <a href="${pageContext.request.contextPath}/tasks"><button class="btn btn-secondary" type="button">戻る</button></a>
   </div>
 </form>
+
+<%-- 削除確認ダイアログ templateタグのためデフォルトでは非表示になる。 --%>
+<jsp:include page="common/deleteConfirmDialog.jsp" />
 
 <jsp:include page="common/Footer.jsp" />
 
