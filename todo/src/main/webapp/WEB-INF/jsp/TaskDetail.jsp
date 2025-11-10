@@ -14,13 +14,17 @@
   <p>${task.description}</p>
 </div>
 
-<form action="${pageContext.request.contextPath}/taskDetail/delete" method="POST">
+<form action="${pageContext.request.contextPath}/taskDetail/delete" method="POST" id="taskDetailForm">
   <input value="${task.taskId}" name="taskId" hidden>
 
   <div class="d-flex justify-content-end gap-2">
-    <a href="${pageContext.request.contextPath}/newTask?taskId=${task.taskId}"><button class="btn btn-primary" type="button">編集</button></a>
-    <button id="deleteBtn"  class="btn btn-secondary" type="submit">削除</button>
-    <a href="${pageContext.request.contextPath}/tasks"><button class="btn btn-secondary" type="button">戻る</button></a>
+    <a href="${pageContext.request.contextPath}/newTask?taskId=${task.taskId}"
+      ><button class="btn btn-primary" type="button">編集</button>
+    </a>
+    <button id="deleteBtn"  class="btn btn-secondary" type="button">削除</button>
+    <a href="${pageContext.request.contextPath}/tasks">
+      <button class="btn btn-secondary" type="button">戻る</button>
+    </a>
   </div>
 </form>
 
@@ -29,4 +33,5 @@
 
 <jsp:include page="common/Footer.jsp" />
 
-<script src="../../js/tasksDetail.js"></script>
+<script type="module" src="${pageContext.request.contextPath}/js/taskDetail.js"></script>
+<%-- <script type="module" src="${pageContext.request.contextPath}/js/ConfirmDialog.js"></script> --%>

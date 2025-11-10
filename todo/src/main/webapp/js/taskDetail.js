@@ -1,9 +1,8 @@
-const deleteBtn = document.getElementById('deleteBtn');
-const deleteConfirmDialogTemplate = document.getElementById('deleteConfirmDialogTemplate');
+import { ConfirmDialog } from './ConfirmDialog.js';
 
-deleteBtn.addEventListener('click', () => {
-  const clone = deleteConfirmDialogTemplate.content.cloneNode(true);
-
-  document.body.appendChild(clone);
-  clone.showModal();
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  const templateElem = document.getElementById('deleteConfirmDialogTemplate');
+  const formElem = document.getElementById('taskDetailForm');
+  const confirmDialog = new ConfirmDialog(templateElem, formElem);
+  confirmDialog.open();
 });
